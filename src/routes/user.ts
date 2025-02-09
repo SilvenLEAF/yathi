@@ -13,6 +13,6 @@ router.get('/', isLoggedin as any, (req, res, next) => {
   res.status(200).json({ user: request.user });
 });
 
-router.get('/all', isLoggedin as any, UserController.getAllUsers);
+router.patch('/profile', isLoggedin as any, UserController.updateOwnProfile);
 /* -------------------------------------------------------------------------- */
 export default router;
