@@ -19,6 +19,11 @@ app.use((req: any, res: Response, next: NextFunction) => {
 import UserRoutes from "./routes/user";
 app.use('/user', UserRoutes);
 
+// check server status
+app.get('/hello', (req: Request, res: Response, next: NextFunction) => {
+  res.json({ message: "Glad to have you drop by : )" }).status(200);
+})
+
 // catch-all handler
 app.get('*', (req: Request, res: Response, next: NextFunction) => {
   res.json({ message: "Nothing here : )" }).status(200);
