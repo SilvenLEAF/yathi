@@ -85,12 +85,24 @@ export class Userlocation extends Model<UserlocationAttributes, UserlocationCrea
       type: DataTypes.BIGINT,
       allowNull: true,
       field: 'updated_by'
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'updated_at'
     }
   }, {
     sequelize,
     tableName: 'userlocation',
     schema: 'yathi',
-    timestamps: true,
+    timestamps: false,
     indexes: [
       {
         name: "userlocation_pkey",

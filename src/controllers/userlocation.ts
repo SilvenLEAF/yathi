@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { IRequestObject } from '../types/common';
 import moment from "moment";
+import { QueryTypes } from 'sequelize';
 
 export const upsertUserLocation = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -15,9 +16,12 @@ export const upsertUserLocation = async (req: Request, res: Response, next: Next
       return;
     }
     const { User, Userlocation } = request.getDbModels();
+    const sequelize = request.getSequelize();
+
     const userRecord = await User.findOne({ where: { userId: userId || 0 }, raw: true, nest: true });
     if (!userRecord) {
       res.status(400).json({ error: true, message: "User not found" });
+      return;
     }
 
     const whereClause = { userId: userId || 0 };
@@ -50,6 +54,7 @@ export const upsertUserLocation = async (req: Request, res: Response, next: Next
     res.json(locationRecord).status(200);
     return;
   } catch (error) {
+    console.error("d", error);
     next({ error, req, res });
   }
 }

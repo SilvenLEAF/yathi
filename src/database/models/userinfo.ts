@@ -112,12 +112,24 @@ export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttribut
       type: DataTypes.BIGINT,
       allowNull: true,
       field: 'updated_by'
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'updated_at'
     }
   }, {
     sequelize,
     tableName: 'userinfo',
     schema: 'yathi',
-    timestamps: true,
+    timestamps: false,
     indexes: [
       {
         name: "userinfo_email_key",

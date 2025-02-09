@@ -50,12 +50,24 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
       type: DataTypes.TEXT,
       allowNull: false,
       unique: "user_email_key"
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'updated_at'
     }
   }, {
     sequelize,
     tableName: 'user',
     schema: 'yathi',
-    timestamps: true,
+    timestamps: false,
     indexes: [
       {
         name: "user_email_key",

@@ -13,6 +13,6 @@ router.get('/', isLoggedin as any, (req, res, next) => {
   res.status(200).json({ user: request.user });
 });
 
-router.get('/upsert', isLoggedin as any, UserLocationController.upsertUserLocation);
+router.post('/upsert', isLoggedin as any, UserLocationController.upsertUserLocation);
 /* -------------------------------------------------------------------------- */
 export default router;

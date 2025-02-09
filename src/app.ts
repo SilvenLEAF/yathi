@@ -19,24 +19,27 @@ app.use((req: any, res: Response, next: NextFunction) => {
 import UserRoutes from "./routes/user";
 app.use('/user', UserRoutes);
 
+import UserLocationRoutes from "./routes/userlocation";
+app.use('/userlocation', UserLocationRoutes);
+
 // check server status
 app.get('/hello', (req: Request, res: Response, next: NextFunction) => {
-  res.json({ message: "Glad to have you drop by : )" }).status(200);
+  res.status(200).json({ message: "Glad to have you drop by : )" })
 })
 
 // catch-all handler
 app.get('*', (req: Request, res: Response, next: NextFunction) => {
-  res.json({ message: "Nothing here : )" }).status(200);
+  res.status(200).json({ message: "Nothing here : )" })
 })
 
 // catch-all error handler
 app.use((errorObjectWithRequestAndResponse: { error: any, req: Request, res: Response }) => {
   const { error, req, res } = errorObjectWithRequestAndResponse;
 
-  console.log(error);
-  console.log(error.message);
+  console.error(error);
+  console.error(error.message);
 
-  res.json({ msg: 'Server Error!', error: error.message }).status(200);
+  res.status(400).json({ msg: 'Server Error!', error: error.message });
 })
 
 // -----------------------------------------LISTEN
