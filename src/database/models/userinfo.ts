@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { User, UserId } from './user';
+import type { Userlocation, UserlocationCreationAttributes, UserlocationId } from './userlocation';
 
 export interface UserinfoAttributes {
   userId: number;
@@ -45,6 +46,11 @@ export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttribut
   getUser!: Sequelize.BelongsToGetAssociationMixin<User>;
   setUser!: Sequelize.BelongsToSetAssociationMixin<User, UserId>;
   createUser!: Sequelize.BelongsToCreateAssociationMixin<User>;
+  // Userinfo hasOne Userlocation via userId
+  userlocation!: Userlocation;
+  getUserlocation!: Sequelize.HasOneGetAssociationMixin<Userlocation>;
+  setUserlocation!: Sequelize.HasOneSetAssociationMixin<Userlocation, UserlocationId>;
+  createUserlocation!: Sequelize.HasOneCreateAssociationMixin<Userlocation>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Userinfo {
     return Userinfo.init({
