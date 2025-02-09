@@ -13,7 +13,7 @@ export interface UserAttributes {
 
 export type UserPk = "userId";
 export type UserId = User[UserPk];
-export type UserOptionalAttributes = "username" | "createdAt" | "updatedAt";
+export type UserOptionalAttributes = "userId" | "username" | "createdAt" | "updatedAt";
 export type UserCreationAttributes = Optional<UserAttributes, UserOptionalAttributes>;
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
@@ -33,6 +33,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   static initModel(sequelize: Sequelize.Sequelize): typeof User {
     return User.init({
     userId: {
+      autoIncrement: true,
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,

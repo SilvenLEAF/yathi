@@ -6,5 +6,7 @@
     "host": "localhost",
     "user": "silvenleaf",
     "password": "postgres"
-  }
+  },
+  "cookieSessionKey": "eaxlwxdospccldx",
+  "jwtSecret": "eaxlwxdospccldx"
 }

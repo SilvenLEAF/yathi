@@ -3,6 +3,11 @@ import config from "config";
 import XDbHelpers from "./database";
 import express, { Request, Response, NextFunction } from 'express';
 
+import passport from "passport";
+// import cookieSession from 'express-session';
+import expressSession from 'express-session';
+
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -15,7 +20,22 @@ app.use((req: any, res: Response, next: NextFunction) => {
   next();
 });
 
+// Session for Passport Local Strategy (not needed for JWT)
+app.use(expressSession({
+  secret: config.get("cookieSessionKey"),
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 24 * 60 * 60 * 1000 },
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+import "./middlewares/passport";
+
+
 // register all the route(s) here
+import AuthRoutes from "./routes/auth";
+app.use('/auth', AuthRoutes);
+
 import UserRoutes from "./routes/user";
 app.use('/user', UserRoutes);
 
