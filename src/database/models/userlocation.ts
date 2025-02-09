@@ -17,7 +17,7 @@ export interface UserlocationAttributes {
 
 export type UserlocationPk = "locationId";
 export type UserlocationId = Userlocation[UserlocationPk];
-export type UserlocationOptionalAttributes = "locationUuid" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt";
+export type UserlocationOptionalAttributes = "locationId" | "locationUuid" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt";
 export type UserlocationCreationAttributes = Optional<UserlocationAttributes, UserlocationOptionalAttributes>;
 
 export class Userlocation extends Model<UserlocationAttributes, UserlocationCreationAttributes> implements UserlocationAttributes {
@@ -41,6 +41,7 @@ export class Userlocation extends Model<UserlocationAttributes, UserlocationCrea
   static initModel(sequelize: Sequelize.Sequelize): typeof Userlocation {
     return Userlocation.init({
     locationId: {
+      autoIncrement: true,
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
