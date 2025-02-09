@@ -1,0 +1,10 @@
+{
+  "PORT": 9000,
+  "database": {
+    "name": "yathi",
+    "host": "localhost:5432",
+    "user": "silvenleaf",
+    "password": "postgres",
+    "port": "5432"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "yathi",
+  "version": "1.0.0",
+  "main": "app.ts",
+  "scripts": {
+    "debug": "export NODE_ENV=dev&&nodemon --inspect src/app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "SilvenLEAF"
+  ],
+  "author": "SilvenLEAF",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/config": "^3.3.5",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.1",
+    "@types/sequelize": "^4.28.20",
+    "nodemon": "^3.1.9",
+    "sequelize-auto": "^0.8.8",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "config": "^3.3.12",
+    "express": "^4.21.2",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2",
+    "typescript": "^5.7.3"
+  }
+}
