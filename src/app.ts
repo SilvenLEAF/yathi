@@ -48,8 +48,8 @@ app.get('/hello', (req: Request, res: Response, next: NextFunction) => {
 })
 
 // catch-all handler
-app.get('*', (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({ message: "Nothing here : )" })
+app.use('*', (req: Request, res: Response, next: NextFunction) => {
+  res.status(200).json({ message: "Nothing here : )" });
 })
 
 // catch-all error handler
@@ -57,9 +57,9 @@ app.use((errorObjectWithRequestAndResponse: { error: any, req: Request, res: Res
   const { error, req, res } = errorObjectWithRequestAndResponse;
 
   console.error(error);
-  console.error(error.message);
+  console.error(error?.message);
 
-  res.status(400).json({ msg: 'Server Error!', error: error.message });
+  res.status(400).json({ error: true, message: error?.message || 'Server Error!' });
 })
 
 // -----------------------------------------LISTEN
