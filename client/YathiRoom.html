@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Socket.IO Events</title>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+</head>
+<body>
+
+  <h1>Socket.IO Events</h1>
+
+  <div>
+    <h2>User Online</h2>
+    <label for="userId">User ID:</label>
+    <input type="text" id="userId" placeholder="Enter User ID">
+    <button onclick="sendUserOnline()">Set User Online</button>
+  </div>
+
+  <div>
+    <h2>Send Message</h2>
+    <label for="senderId">Sender ID:</label>
+    <input type="text" id="senderId" placeholder="Enter Sender ID">
+    <label for="receiverId">Receiver ID:</label>
+    <input type="text" id="receiverId" placeholder="Enter Receiver ID">
+    <label for="content">Message Content:</label>
+    <textarea id="content" placeholder="Enter Message Content"></textarea>
+    <label for="messageType">Message Type:</label>
+    <input type="text" id="messageType" placeholder="Enter Message Type (e.g., text)">
+    <label for="gifFileLocation">GIF File Location:</label>
+    <input type="text" id="gifFileLocation" placeholder="Enter GIF File Location">
+    <label for="voiceNoteFileLocation">Voice Note File Location:</label>
+    <input type="text" id="voiceNoteFileLocation" placeholder="Enter Voice Note File Location">
+    <button onclick="sendMessage()">Send Message</button>
+  </div>
+
+  <div>
+    <h2>Mark Message as Read</h2>
+    <label for="messageId">Message ID:</label>
+    <input type="text" id="messageId" placeholder="Enter Message ID">
+    <button onclick="markAsRead()">Mark as Read</button>
+  </div>
+
+  <script>
+    // Initialize Socket.IO client
+    const socket = io('http://localhost:9000'); // Replace with your server URL
+    
+    // Send 'user_online' event
+    function sendUserOnline() {
+      const userId = document.getElementById('userId').value;
+      socket.emit('user_online', userId);
+    }
+
+    // Send 'send_message' event
+    function sendMessage() {
+      const senderId = document.getElementById('senderId').value;
+      const receiverId = document.getElementById('receiverId').value;
+      const content = document.getElementById('content').value;
+      const messageType = document.getElementById('messageType').value;
+      const gifFileLocation = document.getElementById('gifFileLocation').value;
+      const voiceNoteFileLocation = document.getElementById('voiceNoteFileLocation').value;
+
+      const messageData = {
+        senderId,
+        receiverId,
+        content,
+        messageType,
+        gifFileLocation,
+        voiceNoteFileLocation
+      };
+
+      socket.emit('send_message', messageData);
+    }
+
+    // Send 'mark_as_read' event
+    function markAsRead() {
+      const messageId = document.getElementById('messageId').value;
+      socket.emit('mark_as_read', messageId);
+    }
+
+    // Listen for events from the server
+    socket.on('receive_message', (message) => {
+      console.log('Message received:', message);
+    });
+
+    socket.on('message_read', (data) => {
+      console.log('Message marked as read:', data);
+    });
+  </script>
+
+</body>
+</html>
