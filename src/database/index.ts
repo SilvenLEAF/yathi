@@ -9,6 +9,7 @@ const sequelize = new Sequelize(
     port: database.port,
     host: database.host,
     dialect: 'postgres',
+    logging: console.log,
   }
 );
 
