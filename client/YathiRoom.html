@@ -3,13 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Socket.IO Events</title>
+  <title>Socket.IO Events & Video Call</title>
   <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <style>
+    video {
+      width: 300px;
+      height: 200px;
+      margin: 10px;
+    }
+    #startCall, #answerCall, #hangUpCall {
+      margin: 10px;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>Socket.IO Events</h1>
+  <h1>Socket.IO Events & Video Call</h1>
 
+  <!-- User Online Section -->
   <div>
     <h2>User Online</h2>
     <label for="userId">User ID:</label>
@@ -17,6 +28,7 @@
     <button onclick="sendUserOnline()">Set User Online</button>
   </div>
 
+  <!-- Send Message Section -->
   <div>
     <h2>Send Message</h2>
     <label for="senderId">Sender ID:</label>
@@ -34,6 +46,7 @@
     <button onclick="sendMessage()">Send Message</button>
   </div>
 
+  <!-- Mark Message as Read Section -->
   <div>
     <h2>Mark Message as Read</h2>
     <label for="messageId">Message ID:</label>
@@ -41,10 +54,114 @@
     <button onclick="markAsRead()">Mark as Read</button>
   </div>
 
+  <!-- Video Call Section -->
+  <div>
+    <h2>Video Call</h2>
+    <input type="text" id="calleeId" placeholder="Enter User ID to call">
+    <button id="startCall">Start Call</button>
+    <button id="answerCall">Answer Call</button>
+    <button id="hangUpCall">Hang Up</button>
+    <div>
+      <video id="localVideo" autoplay muted></video>
+      <video id="remoteVideo" autoplay></video>
+    </div>
+  </div>
+
   <script>
-    // Initialize Socket.IO client
     const socket = io('http://localhost:9000'); // Replace with your server URL
     
+    let localStream;
+    let peerConnection;
+    const peerConfig = {
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+    };
+
+    // Initialize local video stream
+    async function startLocalVideo() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        localStream = stream;
+        document.getElementById('localVideo').srcObject = stream;
+      } catch (err) {
+        console.error('Error accessing media devices', err);
+      }
+    }
+
+    // Initialize peer connection before starting a call
+    function initializePeerConnection() {
+      peerConnection = new RTCPeerConnection(peerConfig);
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate) {
+          socket.emit('send_ice_candidate', { candidate: event.candidate });
+        }
+      };
+      peerConnection.ontrack = (event) => {
+        document.getElementById('remoteVideo').srcObject = event.streams[0];
+      };
+      localStream.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, localStream);
+      });
+    }
+
+    // Handle start call
+    document.getElementById('startCall').onclick = () => {
+      const calleeId = document.getElementById('calleeId').value;
+      console.log("@@@calleeId", calleeId);
+      if (calleeId) {
+        initializePeerConnection(); // Initialize peer connection before starting the call
+        peerConnection.createOffer().then((offer) => {
+          return peerConnection.setLocalDescription(offer);
+        }).then(() => {
+          socket.emit('call_user', { userId: calleeId, calleeId, signalData: peerConnection.localDescription });
+        }).catch((err) => {
+          console.error('Error creating offer:', err);
+        });
+      } else {
+        alert('Please enter a valid User ID');
+      }
+    };
+
+    // Handle incoming call
+    socket.on('call_incoming', (data) => {
+      console.log('Incoming call from:', data.from, {data});
+      if (confirm('Do you want to answer the call?')) {
+        answerCall(data);
+      }
+    });
+
+    // Answer the call
+    function answerCall(data) {
+      initializePeerConnection(); // Initialize peer connection before accepting the call
+      peerConnection.setRemoteDescription(new RTCSessionDescription(data.signalData)).then(() => {
+        return peerConnection.createAnswer();
+      }).then((answer) => {
+        return peerConnection.setLocalDescription(answer);
+      }).then(() => {
+        socket.emit('answer_call', { signalData: peerConnection.localDescription, to: data.from });
+      }).catch((err) => {
+        console.error('Error answering call:', err);
+      });
+    }
+
+    // Handle call acceptance
+    socket.on('call_accepted', (data) => {
+      console.log('Call accepted by user:', data.from);
+      peerConnection.setRemoteDescription(new RTCSessionDescription(data.signalData));
+    });
+
+    // ICE candidate exchange
+    socket.on('receive_ice_candidate', (data) => {
+      peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+    });
+
+    // Hang up the call
+    document.getElementById('hangUpCall').onclick = () => {
+      console.log("hanging up...");
+      peerConnection.close();
+      socket.emit('end_call');
+      document.getElementById('remoteVideo').srcObject = null;
+    };
+
     // Send 'user_online' event
     function sendUserOnline() {
       const userId = document.getElementById('userId').value;
@@ -86,6 +203,9 @@
     socket.on('message_read', (data) => {
       console.log('Message marked as read:', data);
     });
+
+    // Initialize the local video when the page loads
+    startLocalVideo();
   </script>
 
 </body>

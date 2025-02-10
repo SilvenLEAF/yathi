@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebRTC Video Call</title>
+  <style>
+    video {
+      width: 300px;
+      height: 200px;
+      margin: 10px;
+    }
+    #startCall, #answerCall, #hangUpCall {
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>WebRTC Video Call</h2>
+
+  <div>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+  </div>
+
+  <!-- Buttons for start, answer, and hang up -->
+  <div>
+    <input type="text" id="calleeId" placeholder="Enter User ID to call">
+    <button id="startCall">Start Call</button>
+    <button id="answerCall">Answer Call</button>
+    <button id="hangUpCall">Hang Up</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io('http://localhost:9000'); // Change this if needed
+    const localVideo = document.getElementById('localVideo');
+    const remoteVideo = document.getElementById('remoteVideo');
+    const startCallButton = document.getElementById('startCall');
+    const answerCallButton = document.getElementById('answerCall');
+    const hangUpCallButton = document.getElementById('hangUpCall');
+    const calleeIdInput = document.getElementById('calleeId');
+
+    let localStream;
+    let peerConnection;
+    const peerConfig = {
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+    };
+
+    // Start the local video stream
+    async function startLocalVideo() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        localStream = stream;
+        localVideo.srcObject = stream;
+      } catch (err) {
+        console.error('Error accessing media devices', err);
+      }
+    }
+
+    // Initialize peer connection before starting the call
+    function initializePeerConnection() {
+      peerConnection = new RTCPeerConnection(peerConfig);
+
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate) {
+          socket.emit('send_ice_candidate', { candidate: event.candidate });
+        }
+      };
+
+      peerConnection.ontrack = (event) => {
+        remoteVideo.srcObject = event.streams[0];
+      };
+
+      localStream.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, localStream);
+      });
+    }
+
+    // Start the call by sending an offer
+    startCallButton.onclick = () => {
+      const calleeId = calleeIdInput.value;
+      if (calleeId) {
+        initializePeerConnection(); // Initialize peer connection before starting the call
+
+        peerConnection.createOffer().then((offer) => {
+          return peerConnection.setLocalDescription(offer);
+        }).then(() => {
+          socket.emit('call_user', { calleeId, signalData: peerConnection.localDescription });
+        }).catch((err) => {
+          console.error('Error creating offer:', err);
+        });
+      } else {
+        alert('Please enter a valid User ID');
+      }
+    };
+
+    // Handle incoming calls
+    socket.on('call_incoming', (data) => {
+      console.log('Incoming call from:', data.from);
+      if (confirm('Do you want to answer the call?')) {
+        answerCall(data);
+      }
+    });
+
+    // Answer the call
+    function answerCall(data) {
+      initializePeerConnection(); // Initialize peer connection before accepting the call
+      peerConnection.setRemoteDescription(new RTCSessionDescription(data.signalData)).then(() => {
+        return peerConnection.createAnswer();
+      }).then((answer) => {
+        return peerConnection.setLocalDescription(answer);
+      }).then(() => {
+        socket.emit('answer_call', { signalData: peerConnection.localDescription, to: data.from });
+      }).catch((err) => {
+        console.error('Error answering call:', err);
+      });
+    }
+
+    // Handle call acceptance
+    socket.on('call_accepted', (data) => {
+      console.log('Call accepted by user:', data.from);
+      peerConnection.setRemoteDescription(new RTCSessionDescription(data.signalData));
+    });
+
+    // ICE candidate exchange
+    socket.on('receive_ice_candidate', (data) => {
+      peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+    });
+
+    // Handle hanging up the call
+    hangUpCallButton.onclick = () => {
+      peerConnection.close();
+      socket.emit('end_call');
+    };
+
+    // Initialize the local video when the page loads
+    startLocalVideo();
+  </script>
+</body>
+</html>

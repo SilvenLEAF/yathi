@@ -3,11 +3,11 @@ const { Server } = require('socket.io');
 
 const initializeSocketIO = (server: any) => {
   const io = new Server(server, {
-    // cors: { origin: '*' }
-    cors: {
-      origin: 'http://localhost:9000', // Allow frontend to connect from port 9000
-      methods: ['GET', 'POST'],
-    },
+    cors: { origin: '*' },
+    // cors: {
+    //   origin: 'http://localhost:9000', // Allow frontend to connect from port 9000
+    //   methods: ['GET', 'POST'],
+    // },
   });
 
   const { Onlineuser, Blockeduser, Message } = XDbHelpers.getDbModels();
@@ -54,6 +54,44 @@ const initializeSocketIO = (server: any) => {
       await Message.update({ isRead: true }, { where: { messageId: messageId || 0 } });
       io.emit('message_read', { messageId }); // handle this on UI
     });
+
+    /* ------------------------------- calling(s) ------------------------------- */
+    socket.on('call_user', async (data: { userId: string, signalData: any }) => {
+      console.log(`Call from ${socket.id} to ${data.userId}`);
+      const receiver = await Onlineuser.findOne({ where: { userId: data.userId || 0 } });
+      const receiverSocketId = receiver?.socketId;
+
+      io.to(receiverSocketId).emit('call_incoming', {
+        signalData: data.signalData,
+        from: socket.id
+      });
+    });
+
+    socket.on('send_ice_candidate', (data: { candidate: any, to: string }) => {
+      io.to(data.to).emit('receive_ice_candidate', {
+        candidate: data.candidate,
+        from: socket.id
+      });
+    });
+
+    socket.on('answer_call', (data: { signalData: any, to: string }) => {
+      io.to(data.to).emit('call_accepted', {
+        signalData: data.signalData,
+        from: socket.id
+      });
+    });
+
+    // handle signaling messages
+    socket.on('signal', (data: any) => {
+      socket.broadcast.emit('signal', data);
+    });
+
+    // handle end call request
+    socket.on('end_call', () => {
+      console.log('Call ended by user:', socket.id);
+      socket.broadcast.emit('call_ended');
+    });
+    /* -------------------------------------------------------------------------- */
 
     socket.on('disconnect', async () => {
       console.log(`@User disconnected (user socket id): ${currentSocketId}`);

@@ -53,6 +53,11 @@ app.get('/ui/yathiroom', (req: Request, res: Response, next: NextFunction) => {
   res.status(200).sendFile(path.resolve(__dirname, '../client/YathiRoom.html'));
 })
 
+app.get('/ui/call', (req: Request, res: Response, next: NextFunction) => {
+  console.log("@requested for YathiRoom");
+  res.status(200).sendFile(path.resolve(__dirname, '../client/AudioVideoCall.html'));
+})
+
 // check server status
 app.get('/hello', (req: Request, res: Response, next: NextFunction) => {
 
