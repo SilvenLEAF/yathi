@@ -3,7 +3,7 @@ import { Sequelize } from "sequelize";
 import { initModels } from "./models/init-models";
 
 const database: { connectionString: string, host: string, port: number, name: string, user: string, password: string } = config.get('database');
-console.log("@database", database);
+console.log("@connected to database", { user: database.user, host: database.host });
 const sequelize = new Sequelize(
   database.connectionString,
   {

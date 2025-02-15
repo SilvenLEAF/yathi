@@ -8,5 +8,10 @@
     "password": "postgres"
   },
   "cookieSessionKey": "eaxlwxdospccldx",
-  "jwtSecret": "eaxlwxdospccldx"
+  "jwtSecret": "eaxlwxdospccldx",
+  "supabase": {
+    "apiKey": "",
+    "projectUrl": "",
+    "defaultStorageBucket": ""
+  }
 }

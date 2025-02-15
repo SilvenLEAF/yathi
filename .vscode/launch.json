@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "configurations": [
+    {
+      "command": "npm run macOrLinux",
+      "name": "MacOS/Linux",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "command": "npm run windows",
+      "name": "Windows",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+  ]
+}

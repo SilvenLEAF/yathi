@@ -47,6 +47,9 @@ app.use('/user', UserRoutes);
 import UserLocationRoutes from "./routes/userlocation";
 app.use('/userlocation', UserLocationRoutes);
 
+import CommonUploadRoutes from "./routes/commonupload";
+app.use('/commonupload', CommonUploadRoutes);
+
 // open YathiRoom
 app.get('/ui/yathiroom', (req: Request, res: Response, next: NextFunction) => {
   console.log("@requested for YathiRoom");
