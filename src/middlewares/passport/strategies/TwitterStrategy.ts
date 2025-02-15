@@ -1,4 +1,3 @@
-import path from "path";
 import config from "config";
 import moment from "moment";
 import bcrypt from 'bcryptjs';
