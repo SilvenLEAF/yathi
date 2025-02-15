@@ -6,6 +6,7 @@ import LoginStrategy from './strategies/LoginStrategy';
 import SignupStrategy from './strategies/SignupStrategy';
 import JwtStrategy from './strategies/JwtStrategy';
 import GoogleStrategy from './strategies/GoogleStrategy';
+import TwitterStrategy from './strategies/TwitterStrategy';
 
 
 
@@ -25,4 +26,6 @@ passport.deserializeUser((userId, done) => {
 passport.use('local-signup', SignupStrategy);
 passport.use('local-login', LoginStrategy);
 passport.use('local-jwt', JwtStrategy);
+
 passport.use('google', GoogleStrategy);
+passport.use('twitter', TwitterStrategy);

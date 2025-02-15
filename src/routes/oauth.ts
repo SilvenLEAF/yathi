@@ -18,4 +18,13 @@ router.get('/google/callback',
   }
 )
 
+router.get('/twitter', passport.authenticate('twitter'));
+
+router.get('/twitter/callback',
+  passport.authenticate('twitter'),
+  (req: Request, res: Response) => {
+    res.redirect('/');
+  }
+)
+
 export default router;

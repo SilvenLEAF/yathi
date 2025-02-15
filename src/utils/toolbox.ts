@@ -1,3 +1,4 @@
+import axios from "axios";
 import mkdirp from "mkdirp";
 import { camelCase } from "lodash";
 
@@ -66,6 +67,24 @@ const generateRandomPassword = (length: number) => {
   return password;
 }
 
+const getBufferFromRemoteUrl = async ({ url }: { url: string }) => {
+  try {
+    if (!url) return null;
+
+    const axiosRes = await axios.get(url, {
+      responseType: 'arraybuffer'
+    })
+
+    const axiosData = axiosRes.data;
+    if (axiosData) return Buffer.from(axiosData, 'binary');
+    return null;
+  } catch (error) {
+    console.error(error);
+    console.error(`Failed to get buffer from remote url "${url}"`);
+    return null;
+  }
+}
+
 const toolbox = {
   sleep,
   lowerAndTrim,
@@ -73,6 +92,7 @@ const toolbox = {
   camelizeKeys,
   getExportDirectory,
   generateRandomPassword,
+  getBufferFromRemoteUrl,
 }
 
 export default toolbox;

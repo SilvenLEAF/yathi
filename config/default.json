@@ -17,7 +17,13 @@
   "oauth": {
     "google": {
       "GOOGLE_CLIENT_ID": "",
-      "GOOGLE_CLIENT_SECRET": ""
+      "GOOGLE_CLIENT_SECRET": "",
+      "GOOGLE_CALLBACK_URL": "http://localhost:9000/oauth/google/callback"
+    },
+    "twitter": {
+      "TWITTER_CONSUMER_KEY": "",
+      "TWITTER_CONSUMER_SECRET": "",
+      "TWITTER_CALLBACK_URL": "http://localhost:9000/oauth/twitter/callback"
     }
   }
 }

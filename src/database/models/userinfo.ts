@@ -22,11 +22,12 @@ export interface UserinfoAttributes {
   updatedBy?: number;
   createdAt?: Date;
   updatedAt?: Date;
+  twitterHandle?: string;
 }
 
 export type UserinfoPk = "userId";
 export type UserinfoId = Userinfo[UserinfoPk];
-export type UserinfoOptionalAttributes = "userUuid" | "firstname" | "lastname" | "picture" | "age" | "gender" | "occupation" | "zodiac" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt";
+export type UserinfoOptionalAttributes = "userUuid" | "firstname" | "lastname" | "picture" | "age" | "gender" | "occupation" | "zodiac" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt" | "twitterHandle";
 export type UserinfoCreationAttributes = Optional<UserinfoAttributes, UserinfoOptionalAttributes>;
 
 export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttributes> implements UserinfoAttributes {
@@ -44,6 +45,7 @@ export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttribut
   updatedBy?: number;
   createdAt?: Date;
   updatedAt?: Date;
+  twitterHandle?: string;
 
   // Userinfo belongsTo User via userId
   user!: User;
@@ -277,6 +279,11 @@ export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttribut
       allowNull: true,
       defaultValue: Sequelize.Sequelize.fn('now'),
       field: 'updated_at'
+    },
+    twitterHandle: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'twitter_handle'
     }
   }, {
     sequelize,

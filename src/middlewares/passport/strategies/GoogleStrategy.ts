@@ -1,7 +1,6 @@
 import config from "config";
 import bcrypt from 'bcryptjs';
 import { Strategy } from 'passport-google-oauth20';
-import { IRequestObject } from "../../../types";
 import XDbHelpers from "../../../database";
 import toolbox from "../../../utils/toolbox";
 
@@ -24,7 +23,7 @@ export default new Strategy(
   },
 
   async (req, accessToken, refreshToken, profile, done) => {
-    const request = req as IRequestObject;
+    console.log("@google profile", profile);
     const { User, Userinfo } = XDbHelpers.getDbModels();
 
     const googleProfileInfo = {
