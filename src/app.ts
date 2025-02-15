@@ -41,6 +41,9 @@ import "./middlewares/passport";
 import AuthRoutes from "./routes/auth";
 app.use('/auth', AuthRoutes);
 
+import OauthRoutes from "./routes/oauth";
+app.use('/oauth', OauthRoutes);
+
 import UserRoutes from "./routes/user";
 app.use('/user', UserRoutes);
 

@@ -48,12 +48,31 @@ const getExportDirectory = (key?: string) => {
   }
 }
 
+const generateRandomPassword = (length: number) => {
+  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+  let password = '';
+
+  // Ensure the length is valid
+  if (length < 8) {
+    throw new Error("Password length must be at least 8 characters.");
+  }
+
+  // Generate random password
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    password += charset[randomIndex];
+  }
+
+  return password;
+}
+
 const toolbox = {
   sleep,
   lowerAndTrim,
   generateWKT,
   camelizeKeys,
   getExportDirectory,
+  generateRandomPassword,
 }
 
 export default toolbox;

@@ -9,11 +9,12 @@ export interface UserAttributes {
   email: string;
   createdAt?: Date;
   updatedAt?: Date;
+  googleOauthId?: string;
 }
 
 export type UserPk = "userId";
 export type UserId = User[UserPk];
-export type UserOptionalAttributes = "userId" | "username" | "createdAt" | "updatedAt";
+export type UserOptionalAttributes = "userId" | "username" | "createdAt" | "updatedAt" | "googleOauthId";
 export type UserCreationAttributes = Optional<UserAttributes, UserOptionalAttributes>;
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
@@ -23,6 +24,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   email!: string;
   createdAt?: Date;
   updatedAt?: Date;
+  googleOauthId?: string;
 
   // User hasOne Userinfo via userId
   userinfo!: Userinfo;
@@ -63,6 +65,11 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
       allowNull: true,
       defaultValue: Sequelize.Sequelize.fn('now'),
       field: 'updated_at'
+    },
+    googleOauthId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'google_oauth_id'
     }
   }, {
     sequelize,

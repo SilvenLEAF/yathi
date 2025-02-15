@@ -13,5 +13,11 @@
     "apiKey": "",
     "projectUrl": "",
     "defaultStorageBucket": ""
+  },
+  "oauth": {
+    "google": {
+      "GOOGLE_CLIENT_ID": "",
+      "GOOGLE_CLIENT_SECRET": ""
+    }
   }
 }
