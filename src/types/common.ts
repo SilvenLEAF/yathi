@@ -1,9 +1,9 @@
 import { Request } from "express";
 import XDbHelpers from "../database";
-import { UserAttributes } from "../database/models/user";
+import { UserinfoAttributes } from "../database/models/userinfo";
 
 export interface IRequestObject extends Request {
-  user?: UserAttributes;
+  user?: UserinfoAttributes;
 
   getDbModels: typeof XDbHelpers.getDbModels;
   getSequelize: typeof XDbHelpers.getSequelize;

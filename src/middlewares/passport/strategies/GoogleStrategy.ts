@@ -1,10 +1,9 @@
 import config from "config";
-import moment from "moment";
 import bcrypt from 'bcryptjs';
 import { Strategy } from 'passport-google-oauth20';
 import XDbHelpers from "../../../database";
 import toolbox from "../../../utils/toolbox";
-import SupabaseHelpers from "../../../utils/supabase";
+import { getOauthPictureLocationFromUrl } from "../helpers";
 
 const oauthConfig: any = config.get("oauth");
 const googleConfig: {
@@ -32,12 +31,11 @@ export default new Strategy(
       email: toolbox.lowerAndTrim(profile?.emails?.[0].value),
     }
     const emailLower = toolbox.lowerAndTrim(oauthInfo.email);
+    let pictureLocation = await getOauthPictureLocationFromUrl({ pictureUrl: oauthInfo.profileImage });
+
     let existing = await User.findOne({ where: { googleOauthId: oauthInfo.googleOauthId || 0 }, raw: true, nest: true });
-
+    // users can not create 2 accouts with oauthId and email
     if (!existing) {
-      // users can not create 2 accouts with oauthId and email
-      // check if email account exists
-
       existing = await User.findOne({ where: { email: oauthInfo.email || 0 }, raw: true, nest: true });
       if (existing) {
         await User.update({ googleOauthId: oauthInfo.googleOauthId }, { where: { userId: existing.userId || 0 } });
@@ -46,6 +44,10 @@ export default new Strategy(
 
     if (existing) {
       // log in
+      const exuserinfo = await Userinfo.findOne({ where: { userId: existing.userId || 0 }, raw: true, nest: true });
+      if (!exuserinfo?.picture) {
+        await Userinfo.update({ picture: pictureLocation }, { where: { userId: existing.userId || 0 } });
+      }
       done(undefined, existing);
     } else {
       // sign up
@@ -58,22 +60,6 @@ export default new Strategy(
         googleOauthId: oauthInfo.googleOauthId,
       });
 
-      let pictureLocation;
-      if (oauthInfo.profileImage) {
-        const fileBuffer = await toolbox.getBufferFromRemoteUrl({ url: oauthInfo.profileImage });
-        if (fileBuffer) {
-          const { pathname } = new URL(oauthInfo.profileImage);
-          const filename = pathname.split("/").pop();
-          const timeKey = moment().format('YYYY/MM/DD');
-          const fileLocation = `${timeKey}/${filename}`;
-          const uploadResp: any = await SupabaseHelpers.uploadFile({ fileLocation, fileBuffer });
-          console.log("@saved twitter profile image to supabase", uploadResp.id);
-
-          if (uploadResp.id) {
-            pictureLocation = fileLocation;
-          }
-        }
-      }
       let newuserinfo = await Userinfo.create({
         email: emailLower,
         userId: newuser.userId,

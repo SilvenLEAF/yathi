@@ -16,9 +16,11 @@ passport.serializeUser((user: any, done) => {
   done(null, user.userId);
 });
 
-passport.deserializeUser((userId, done) => {
+passport.deserializeUser(async (userId, done) => {
   const { Userinfo } = XDbHelpers.getDbModels();
-  Userinfo.findOne({ where: { userId: userId || 0 } }).then(user => done(null, user));
+  //  const user = await Userinfo.findOne({ where: { userId: userId || 0 }, raw: true, nest: true }).then(user => done(null, user));
+  const user = await Userinfo.findOne({ where: { userId: userId || 0 }, raw: true, nest: true });
+  done(null, user);
 });
 
 
