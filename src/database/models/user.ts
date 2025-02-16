@@ -12,11 +12,12 @@ export interface UserAttributes {
   googleOauthId?: string;
   twitterOauthId?: string;
   linkedinOauthId?: string;
+  facebookOauthId?: string;
 }
 
 export type UserPk = "userId";
 export type UserId = User[UserPk];
-export type UserOptionalAttributes = "userId" | "username" | "createdAt" | "updatedAt" | "googleOauthId" | "twitterOauthId" | "linkedinOauthId";
+export type UserOptionalAttributes = "userId" | "username" | "createdAt" | "updatedAt" | "googleOauthId" | "twitterOauthId" | "linkedinOauthId" | "facebookOauthId";
 export type UserCreationAttributes = Optional<UserAttributes, UserOptionalAttributes>;
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
@@ -29,6 +30,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   googleOauthId?: string;
   twitterOauthId?: string;
   linkedinOauthId?: string;
+  facebookOauthId?: string;
 
   // User hasOne Userinfo via userId
   userinfo!: Userinfo;
@@ -84,6 +86,11 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
       type: DataTypes.STRING,
       allowNull: true,
       field: 'linkedin_oauth_id'
+    },
+    facebookOauthId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'facebook_oauth_id'
     }
   }, {
     sequelize,

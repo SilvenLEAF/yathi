@@ -23,6 +23,14 @@ router.get('/twitter/callback',
   }
 )
 
+router.get('/facebook', passport.authenticate('facebook'));
+router.get('/facebook/callback',
+  passport.authenticate('facebook'),
+  (req: Request, res: Response) => {
+    res.redirect('/');
+  }
+)
+
 router.get('/linkedin', passport.authenticate('linkedin', { scope: ['r_emailaddress', 'r_liteprofile'] }));
 router.get('/linkedin/callback',
   passport.authenticate('linkedin'),
