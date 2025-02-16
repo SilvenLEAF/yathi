@@ -99,6 +99,7 @@ export const getMatchesBasedOnLocation = async (req: Request, res: Response, nex
           ST_GeogFromText(:userGeoLocation),
           :radiusInMeter  -- radius in meters
         )
+        AND ui.is_visible IS TRUE
         AND ui.user_id <> :luserId
       `
       if (!isCount) {

@@ -23,11 +23,13 @@ export interface UserinfoAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   twitterHandle?: string;
+  dateOfBirth?: string;
+  isVisible: boolean;
 }
 
 export type UserinfoPk = "userId";
 export type UserinfoId = Userinfo[UserinfoPk];
-export type UserinfoOptionalAttributes = "userUuid" | "firstname" | "lastname" | "picture" | "age" | "gender" | "occupation" | "zodiac" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt" | "twitterHandle";
+export type UserinfoOptionalAttributes = "userUuid" | "firstname" | "lastname" | "picture" | "age" | "gender" | "occupation" | "zodiac" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt" | "twitterHandle" | "dateOfBirth";
 export type UserinfoCreationAttributes = Optional<UserinfoAttributes, UserinfoOptionalAttributes>;
 
 export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttributes> implements UserinfoAttributes {
@@ -46,6 +48,8 @@ export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttribut
   createdAt?: Date;
   updatedAt?: Date;
   twitterHandle?: string;
+  dateOfBirth?: string;
+  isVisible!: boolean;
 
   // Userinfo belongsTo User via userId
   user!: User;
@@ -284,6 +288,17 @@ export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttribut
       type: DataTypes.STRING,
       allowNull: true,
       field: 'twitter_handle'
+    },
+    dateOfBirth: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+      field: 'date_of_birth'
+    },
+    isVisible: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'is_visible'
     }
   }, {
     sequelize,
