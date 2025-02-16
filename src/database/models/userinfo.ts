@@ -24,12 +24,12 @@ export interface UserinfoAttributes {
   updatedAt?: Date;
   twitterHandle?: string;
   dateOfBirth?: string;
-  isVisible: boolean;
+  isVisible?: boolean;
 }
 
 export type UserinfoPk = "userId";
 export type UserinfoId = Userinfo[UserinfoPk];
-export type UserinfoOptionalAttributes = "userUuid" | "firstname" | "lastname" | "picture" | "age" | "gender" | "occupation" | "zodiac" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt" | "twitterHandle" | "dateOfBirth";
+export type UserinfoOptionalAttributes = "userUuid" | "firstname" | "lastname" | "picture" | "age" | "gender" | "occupation" | "zodiac" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt" | "twitterHandle" | "dateOfBirth" | "isVisible";
 export type UserinfoCreationAttributes = Optional<UserinfoAttributes, UserinfoOptionalAttributes>;
 
 export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttributes> implements UserinfoAttributes {
@@ -49,7 +49,7 @@ export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttribut
   updatedAt?: Date;
   twitterHandle?: string;
   dateOfBirth?: string;
-  isVisible!: boolean;
+  isVisible?: boolean;
 
   // Userinfo belongsTo User via userId
   user!: User;
@@ -296,7 +296,7 @@ export class Userinfo extends Model<UserinfoAttributes, UserinfoCreationAttribut
     },
     isVisible: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
+      allowNull: true,
       defaultValue: false,
       field: 'is_visible'
     }
