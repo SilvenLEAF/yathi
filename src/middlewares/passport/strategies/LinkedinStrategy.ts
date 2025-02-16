@@ -17,8 +17,7 @@ export default new Strategy(
     clientID: linkedinConfig.LINKEDIN_CLIENT_ID!,
     clientSecret: linkedinConfig.LINKEDIN_CLIENT_SECRET!,
     callbackURL: linkedinConfig.LINKEDIN_CALLBACK_URL,
-    // scope: ["openid", "profile", "r_emailaddress", "w_member_social"], // Use r_emailaddress
-    scope: ['r_emailaddress', 'r_liteprofile'],
+    scope: ['openid', 'profile', 'w_member_social', 'email'],
     passReqToCallback: true,
   },
 

@@ -31,7 +31,7 @@ router.get('/facebook/callback',
   }
 )
 
-router.get('/linkedin', passport.authenticate('linkedin', { scope: ['r_emailaddress', 'r_liteprofile'] }));
+router.get('/linkedin', passport.authenticate('linkedin', { scope: ['openid', 'profile', 'w_member_social', 'email'] }));
 router.get('/linkedin/callback',
   passport.authenticate('linkedin'),
   (req: Request, res: Response) => {
