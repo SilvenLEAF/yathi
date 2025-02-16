@@ -1,49 +1,47 @@
 import config from "config";
 import moment from "moment";
 import bcrypt from 'bcryptjs';
-import { Strategy } from 'passport-twitter';
+import { Strategy } from 'passport-linkedin-oauth2';
 import XDbHelpers from "../../../database";
 import toolbox from "../../../utils/toolbox";
 import SupabaseHelpers from "../../../utils/supabase";
 
 const oauthConfig: any = config.get("oauth");
-const twitterConfig: {
-  TWITTER_CONSUMER_KEY: string;
-  TWITTER_CONSUMER_SECRET: string;
-  TWITTER_CALLBACK_URL: string;
-} = oauthConfig.twitter;
+const linkedinConfig: {
+  LINKEDIN_CLIENT_ID: string;
+  LINKEDIN_CLIENT_SECRET: string;
+  LINKEDIN_CALLBACK_URL: string;
+} = oauthConfig.linkedin;
 
 export default new Strategy(
   {
-    consumerKey: twitterConfig.TWITTER_CONSUMER_KEY!,
-    consumerSecret: twitterConfig.TWITTER_CONSUMER_SECRET!,
-    callbackURL: twitterConfig.TWITTER_CALLBACK_URL,
+    clientID: linkedinConfig.LINKEDIN_CLIENT_ID!,
+    clientSecret: linkedinConfig.LINKEDIN_CLIENT_SECRET!,
+    callbackURL: linkedinConfig.LINKEDIN_CALLBACK_URL,
     passReqToCallback: true,
   },
 
   async (req, accessToken, refreshToken, profile, done) => {
-    console.log("@twitter profile", profile);
+    console.log("@linkedin profile", profile);
     const { User, Userinfo } = XDbHelpers.getDbModels();
 
-    const genEmail = (text: string) => toolbox.lowerAndTrim(text) + "@yathi.ai";
     const oauthInfo = {
-      twitterOauthId: profile.id,
-      twitterHandle: profile.username ? `@${profile.username}` : undefined,
+      linkedinOauthId: profile.id,
 
       username: profile.displayName,
       profileImage: profile.photos?.[0].value,
-      email: toolbox.lowerAndTrim(profile?.emails?.[0].value) || genEmail(profile.username),
+      email: toolbox.lowerAndTrim(profile?.emails?.[0].value),
     }
     const emailLower = toolbox.lowerAndTrim(oauthInfo.email);
-    let existing = await User.findOne({ where: { twitterOauthId: oauthInfo.twitterOauthId || 0 }, raw: true, nest: true });
+    let existing = await User.findOne({ where: { linkedinOauthId: oauthInfo.linkedinOauthId || 0 }, raw: true, nest: true });
 
     if (!existing) {
-      // users can not create 2 accouts with oauthId and email
+      // users can not create 2 accouts with google and email
       // check if email account exists
 
       existing = await User.findOne({ where: { email: oauthInfo.email || 0 }, raw: true, nest: true });
       if (existing) {
-        await User.update({ twitterOauthId: oauthInfo.twitterOauthId }, { where: { userId: existing.userId || 0 } });
+        await User.update({ linkedinOauthId: oauthInfo.linkedinOauthId }, { where: { userId: existing.userId || 0 } });
       }
     }
 
@@ -58,7 +56,7 @@ export default new Strategy(
         email: emailLower,
         username: emailLower,
         password: bcrypt.hashSync(password, bcrypt.genSaltSync()),
-        twitterOauthId: oauthInfo.twitterOauthId,
+        linkedinOauthId: oauthInfo.linkedinOauthId,
       });
 
       let pictureLocation;
@@ -83,7 +81,6 @@ export default new Strategy(
         userId: newuser.userId,
         firstname: oauthInfo.username,
         picture: pictureLocation,
-        twitterHandle: oauthInfo.twitterHandle,
 
         createdBy: newuser.userId,
         updatedBy: newuser.userId,

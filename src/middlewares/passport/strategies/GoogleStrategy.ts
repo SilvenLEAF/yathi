@@ -13,9 +13,6 @@ const googleConfig: {
   GOOGLE_CALLBACK_URL: string;
 } = oauthConfig.google;
 
-
-
-
 export default new Strategy(
   {
     clientID: googleConfig.GOOGLE_CLIENT_ID!,
@@ -38,7 +35,7 @@ export default new Strategy(
     let existing = await User.findOne({ where: { googleOauthId: oauthInfo.googleOauthId || 0 }, raw: true, nest: true });
 
     if (!existing) {
-      // users can not create 2 accouts with google and email
+      // users can not create 2 accouts with oauthId and email
       // check if email account exists
 
       existing = await User.findOne({ where: { email: oauthInfo.email || 0 }, raw: true, nest: true });

@@ -7,6 +7,7 @@ import SignupStrategy from './strategies/SignupStrategy';
 import JwtStrategy from './strategies/JwtStrategy';
 import GoogleStrategy from './strategies/GoogleStrategy';
 import TwitterStrategy from './strategies/TwitterStrategy';
+import LinkedinStrategy from './strategies/LinkedinStrategy';
 
 
 
@@ -29,3 +30,4 @@ passport.use('local-jwt', JwtStrategy);
 
 passport.use('google', GoogleStrategy);
 passport.use('twitter', TwitterStrategy);
+passport.use('linkedin', LinkedinStrategy);

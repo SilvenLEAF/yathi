@@ -24,6 +24,11 @@
       "TWITTER_CONSUMER_KEY": "",
       "TWITTER_CONSUMER_SECRET": "",
       "TWITTER_CALLBACK_URL": "http://localhost:9000/oauth/twitter/callback"
+    },
+    "linkedin": {
+      "LINKEDIN_CLIENT_ID": "",
+      "LINKEDIN_CLIENT_SECRET": "",
+      "LINKEDIN_CALLBACK_URL": "http://localhost:9000/oauth/linkedin/callback"
     }
   }
 }
